@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Clock</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0f0f1a;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      background: linear-gradient(135deg, #818cf8, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      margin-top: 0.4rem;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    /* Search / add */
+    .controls {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .controls select,
+    .controls button {
+      padding: 0.55rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #1e293b;
+      background: #1e293b;
+      color: #e2e8f0;
+      font-size: 0.9rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .controls select { flex: 1; }
+    .controls select:focus { border-color: #818cf8; }
+
+    .controls button {
+      background: #818cf8;
+      color: #0f0f1a;
+      font-weight: 600;
+      border-color: #818cf8;
+    }
+
+    .controls button:hover { background: #6366f1; }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.25rem;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    /* Card */
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 1rem;
+      padding: 1.4rem 1.2rem 1.2rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+
+    .card .remove-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.7rem;
+      background: none;
+      border: none;
+      color: #475569;
+      font-size: 1rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.15rem 0.3rem;
+      border-radius: 0.25rem;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .card .remove-btn:hover { color: #f87171; background: #2d1f1f; }
+
+    .card .city {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .card .time {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .card .date {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    .card .offset {
+      font-size: 0.75rem;
+      color: #475569;
+      margin-top: 0.2rem;
+    }
+
+    /* Analog clock */
+    .analog {
+      margin-top: 0.6rem;
+    }
+
+    .analog svg { display: block; }
+
+    /* Day/night indicator */
+    .day-indicator {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .day-indicator.day  { background: #fef08a22; color: #fde047; }
+    .day-indicator.night { background: #818cf822; color: #818cf8; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>World Clock</h1>
+  <p>Live clocks across every time zone</p>
+</header>
+
+<div class="controls">
+  <select id="tzSelect"></select>
+  <button onclick="addCity()">+ Add</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+  // Full list of IANA time zones with friendly labels
+  const ALL_ZONES = [
+    { label: "New York (EST/EDT)",        tz: "America/New_York" },
+    { label: "Los Angeles (PST/PDT)",     tz: "America/Los_Angeles" },
+    { label: "Chicago (CST/CDT)",         tz: "America/Chicago" },
+    { label: "Denver (MST/MDT)",          tz: "America/Denver" },
+    { label: "Toronto",                   tz: "America/Toronto" },
+    { label: "São Paulo",                 tz: "America/Sao_Paulo" },
+    { label: "Buenos Aires",              tz: "America/Argentina/Buenos_Aires" },
+    { label: "Mexico City",               tz: "America/Mexico_City" },
+    { label: "Vancouver",                 tz: "America/Vancouver" },
+    { label: "London (GMT/BST)",          tz: "Europe/London" },
+    { label: "Paris (CET/CEST)",          tz: "Europe/Paris" },
+    { label: "Berlin",                    tz: "Europe/Berlin" },
+    { label: "Madrid",                    tz: "Europe/Madrid" },
+    { label: "Rome",                      tz: "Europe/Rome" },
+    { label: "Amsterdam",                 tz: "Europe/Amsterdam" },
+    { label: "Stockholm",                 tz: "Europe/Stockholm" },
+    { label: "Moscow (MSK)",              tz: "Europe/Moscow" },
+    { label: "Istanbul",                  tz: "Europe/Istanbul" },
+    { label: "Athens",                    tz: "Europe/Athens" },
+    { label: "Dubai (GST)",               tz: "Asia/Dubai" },
+    { label: "Riyadh",                    tz: "Asia/Riyadh" },
+    { label: "Karachi (PKT)",             tz: "Asia/Karachi" },
+    { label: "Kolkata (IST)",             tz: "Asia/Kolkata" },
+    { label: "Dhaka (BST)",               tz: "Asia/Dhaka" },
+    { label: "Bangkok (ICT)",             tz: "Asia/Bangkok" },
+    { label: "Singapore (SGT)",           tz: "Asia/Singapore" },
+    { label: "Shanghai (CST)",            tz: "Asia/Shanghai" },
+    { label: "Hong Kong (HKT)",           tz: "Asia/Hong_Kong" },
+    { label: "Seoul (KST)",               tz: "Asia/Seoul" },
+    { label: "Tokyo (JST)",               tz: "Asia/Tokyo" },
+    { label: "Taipei",                    tz: "Asia/Taipei" },
+    { label: "Jakarta",                   tz: "Asia/Jakarta" },
+    { label: "Manila",                    tz: "Asia/Manila" },
+    { label: "Kuala Lumpur",             tz: "Asia/Kuala_Lumpur" },
+    { label: "Colombo",                   tz: "Asia/Colombo" },
+    { label: "Tehran (IRST)",             tz: "Asia/Tehran" },
+    { label: "Kathmandu",                 tz: "Asia/Kathmandu" },
+    { label: "Yangon",                    tz: "Asia/Rangoon" },
+    { label: "Taipei",                    tz: "Asia/Taipei" },
+    { label: "Sydney (AEST/AEDT)",        tz: "Australia/Sydney" },
+    { label: "Melbourne",                 tz: "Australia/Melbourne" },
+    { label: "Brisbane",                  tz: "Australia/Brisbane" },
+    { label: "Perth",                     tz: "Australia/Perth" },
+    { label: "Adelaide",                  tz: "Australia/Adelaide" },
+    { label: "Auckland (NZST/NZDT)",      tz: "Pacific/Auckland" },
+    { label: "Honolulu (HST)",            tz: "Pacific/Honolulu" },
+    { label: "Anchorage (AKST/AKDT)",     tz: "America/Anchorage" },
+    { label: "Cairo (EET)",               tz: "Africa/Cairo" },
+    { label: "Nairobi (EAT)",             tz: "Africa/Nairobi" },
+    { label: "Lagos (WAT)",               tz: "Africa/Lagos" },
+    { label: "Johannesburg (SAST)",       tz: "Africa/Johannesburg" },
+    { label: "Casablanca",                tz: "Africa/Casablanca" },
+    { label: "UTC",                       tz: "UTC" },
+  ];
+
+  // Deduplicate by tz
+  const ZONES = [];
+  const seen = new Set();
+  for (const z of ALL_ZONES) {
+    if (!seen.has(z.tz)) { seen.add(z.tz); ZONES.push(z); }
+  }
+
+  // Default cities shown on load
+  const defaults = [
+    "America/New_York",
+    "Europe/London",
+    "Asia/Dubai",
+    "Asia/Tokyo",
+    "Australia/Sydney",
+    "UTC",
+  ];
+
+  let active = [...defaults]; // list of tz strings currently shown
+
+  // Populate select
+  const sel = document.getElementById('tzSelect');
+  ZONES.forEach(z => {
+    const opt = document.createElement('option');
+    opt.value = z.tz;
+    opt.textContent = z.label;
+    sel.appendChild(opt);
+  });
+
+  function addCity() {
+    const tz = sel.value;
+    if (!active.includes(tz)) {
+      active.push(tz);
+      renderAll();
+    }
+  }
+
+  function removeCity(tz) {
+    active = active.filter(t => t !== tz);
+    renderAll();
+  }
+
+  function labelFor(tz) {
+    return ZONES.find(z => z.tz === tz)?.label ?? tz;
+  }
+
+  function cityName(label) {
+    // Return just the city part before the parenthesis
+    return label.replace(/\s*\(.*\)$/, '');
+  }
+
+  function getTimeParts(tz) {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { timeZone: tz, hour12: false,
+      hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const dateStr = now.toLocaleDateString('en-US', { timeZone: tz,
+      weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+    // parse h/m/s
+    const [h, m, s] = timeStr.split(':').map(Number);
+    const hour = h % 12;
+
+    // UTC offset label
+    const offsetStr = now.toLocaleString('en-US', { timeZone: tz, timeZoneName: 'short' })
+      .split(' ').pop();
+
+    return { h, m, s, hour, dateStr, offsetStr };
+  }
+
+  function drawAnalog(canvas, h, m, s) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2, r = W / 2 - 4;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Face
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = '#0f172a';
+    ctx.fill();
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Hour ticks
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+      const inner = r * 0.82, outer = r * 0.93;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(angle) * inner, cy + Math.sin(angle) * inner);
+      ctx.lineTo(cx + Math.cos(angle) * outer, cy + Math.sin(angle) * outer);
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // Hands
+    function hand(angle, len, width, color) {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    const hourAngle  = ((h % 12 + m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+    const minAngle   = ((m + s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+    const secAngle   = (s / 60) * Math.PI * 2 - Math.PI / 2;
+
+    hand(hourAngle, r * 0.52, 3.5, '#94a3b8');
+    hand(minAngle,  r * 0.72, 2.5, '#e2e8f0');
+    hand(secAngle,  r * 0.80, 1.5, '#f43f5e');
+
+    // Center dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#f43f5e';
+    ctx.fill();
+  }
+
+  function renderAll() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+
+    active.forEach(tz => {
+      const label = labelFor(tz);
+      const city  = cityName(label);
+      const card  = document.createElement('div');
+      card.className = 'card';
+      card.dataset.tz = tz;
+
+      const parts = getTimeParts(tz);
+      const isDay = parts.h >= 6 && parts.h < 20;
+
+      card.innerHTML = `
+        <button class="remove-btn" title="Remove" onclick="removeCity('${tz}')">✕</button>
+        <div class="city">${city}</div>
+        <div class="time" id="time-${tz.replace(/\//g,'-')}">
+          ${String(parts.h).padStart(2,'0')}:${String(parts.m).padStart(2,'0')}:${String(parts.s).padStart(2,'0')}
+        </div>
+        <div class="date" id="date-${tz.replace(/\//g,'-')}">${parts.dateStr}</div>
+        <div class="offset">
+          <span class="day-indicator ${isDay ? 'day' : 'night'}">${isDay ? '☀ Day' : '☾ Night'}</span>
+          &nbsp;${parts.offsetStr}
+        </div>
+        <div class="analog">
+          <canvas id="canvas-${tz.replace(/\//g,'-')}" width="100" height="100"></canvas>
+        </div>
+      `;
+
+      grid.appendChild(card);
+
+      const canvas = document.getElementById(`canvas-${tz.replace(/\//g,'-')}`);
+      drawAnalog(canvas, parts.h, parts.m, parts.s);
+    });
+  }
+
+  function tick() {
+    active.forEach(tz => {
+      const key = tz.replace(/\//g,'-');
+      const timeEl   = document.getElementById(`time-${key}`);
+      const dateEl   = document.getElementById(`date-${key}`);
+      const canvas   = document.getElementById(`canvas-${key}`);
+      const offsetEl = canvas?.closest('.card')?.querySelector('.offset');
+
+      if (!timeEl) return;
+
+      const parts = getTimeParts(tz);
+      timeEl.textContent =
+        `${String(parts.h).padStart(2,'0')}:${String(parts.m).padStart(2,'0')}:${String(parts.s).padStart(2,'0')}`;
+      if (dateEl) dateEl.textContent = parts.dateStr;
+      if (canvas) drawAnalog(canvas, parts.h, parts.m, parts.s);
+
+      if (offsetEl) {
+        const isDay = parts.h >= 6 && parts.h < 20;
+        const ind = offsetEl.querySelector('.day-indicator');
+        if (ind) {
+          ind.className = `day-indicator ${isDay ? 'day' : 'night'}`;
+          ind.textContent = isDay ? '☀ Day' : '☾ Night';
+        }
+      }
+    });
+  }
+
+  renderAll();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>

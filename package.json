@@ -1,0 +1,12 @@
+{
+  "name": "pomodoro-clock",
+  "version": "1.0.0",
+  "description": "Pomodoro tomato clock desktop app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^42.4.1"
+  }
+}
