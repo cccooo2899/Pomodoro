@@ -11,204 +11,45 @@
     font-family: 'Segoe UI', system-ui, sans-serif;
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #1a0a0a;
+    flex-direction: column;
+    background: #FFF7F3;
     transition: background 0.6s ease;
   }
 
-  body.break { background: #0a1a12; }
-  body.long-break { background: #0a0f1a; }
+  body.break { background: #F0FBF7; }
+  body.long-break { background: #FFF0F6; }
 
-  .app {
-    text-align: center;
-    padding: 48px 56px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 24px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
-    min-width: 380px;
-  }
-
-  .title {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #ff6b6b;
-    margin-bottom: 32px;
-    transition: color 0.6s;
-  }
-
-  body.break .title { color: #51cf66; }
-  body.long-break .title { color: #74c0fc; }
-
-  .mode-tabs {
-    display: flex;
-    gap: 6px;
-    background: rgba(0,0,0,0.3);
-    border-radius: 12px;
-    padding: 4px;
-    margin-bottom: 40px;
-  }
-
-  .mode-btn {
-    flex: 1;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: rgba(255,255,255,0.45);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-
-  .mode-btn.active {
-    background: rgba(255,107,107,0.25);
-    color: #ff6b6b;
-  }
-
-  body.break .mode-btn.active { background: rgba(81,207,102,0.25); color: #51cf66; }
-  body.long-break .mode-btn.active { background: rgba(116,192,252,0.25); color: #74c0fc; }
-
-  .mode-btn:hover:not(.active) { color: rgba(255,255,255,0.7); }
-
-  /* Ring timer */
-  .ring-container {
-    position: relative;
-    width: 220px;
-    height: 220px;
-    margin: 0 auto 36px;
-  }
-
-  svg.ring { transform: rotate(-90deg); }
-
-  .ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
-  .ring-progress {
-    fill: none;
-    stroke: #ff6b6b;
-    stroke-width: 8;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 1s linear, stroke 0.6s;
-  }
-
-  body.break .ring-progress { stroke: #51cf66; }
-  body.long-break .ring-progress { stroke: #74c0fc; }
-
-  .ring-inner {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-  }
-
-  .time-display {
-    font-size: 56px;
-    font-weight: 200;
-    letter-spacing: -2px;
-    color: #fff;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .session-label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-  }
-
-  .controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 36px;
-  }
-
-  .btn-main {
-    padding: 14px 44px;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    background: #ff6b6b;
-    color: #fff;
-    transition: all 0.2s;
-    box-shadow: 0 4px 20px rgba(255,107,107,0.35);
-  }
-
-  body.break .btn-main { background: #51cf66; box-shadow: 0 4px 20px rgba(81,207,102,0.35); }
-  body.long-break .btn-main { background: #74c0fc; box-shadow: 0 4px 20px rgba(116,192,252,0.35); }
-
-  .btn-main:hover { opacity: 0.85; transform: translateY(-1px); }
-  .btn-main:active { transform: translateY(0); }
-
-  .btn-icon {
-    width: 40px; height: 40px;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 50%;
-    background: transparent;
-    color: rgba(255,255,255,0.45);
-    font-size: 14px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-  }
-
-  .btn-icon:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
-
-  .stats {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-  }
-
-  .stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .stat-value {
-    font-size: 22px;
-    font-weight: 300;
-    color: #fff;
-  }
-
-  .stat-label {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-  }
-
-  .tomato { font-size: 20px; margin-right: 6px; vertical-align: -2px; }
-
-  /* Electron title bar */
-  .titlebar {
+  /* ── Control bar ── */
+  .control-bar {
     -webkit-app-region: drag;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    gap: 8px;
-    padding: 0 0 16px 0;
+    justify-content: space-between;
+    padding: 0 18px;
+    height: 42px;
+    background: #FFF7F3;
+    border-bottom: 2px solid #111111;
+    flex-shrink: 0;
   }
 
-  .titlebar button {
+  .control-bar-title {
+    font-family: 'Bahnschrift', 'DIN Alternate', 'Arial Narrow', sans-serif;
+    font-stretch: condensed;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #FF5A4F;
+  }
+
+  .control-bar-btns {
     -webkit-app-region: no-drag;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .control-bar-btns button {
     width: 12px; height: 12px;
     border-radius: 50%;
     border: none;
@@ -217,105 +58,380 @@
     transition: opacity 0.2s;
   }
 
-  .titlebar button:hover { opacity: 0.7; }
-  .btn-minimize { background: #f9c74f; }
-  .btn-close    { background: #f94144; }
+  .control-bar-btns button:hover { opacity: 0.7; }
+  .btn-minimize { background: #FFD93D; }
+  .btn-close    { background: #FF5A4F; }
+
+  /* ── Main layout ── */
+  .main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 24px;
+  }
+
+  .app {
+    text-align: center;
+    padding: 28px 40px 32px;
+    background: #FFFFFF;
+    border: 3px solid #111111;
+    border-radius: 24px;
+    box-shadow: 6px 6px 0 #111111;
+    width: 100%;
+  }
+
+  /* ── Mode tabs ── */
+  .mode-tabs {
+    display: flex;
+    gap: 5px;
+    background: #F5EDE8;
+    border: 2px solid #111111;
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+  }
+
+  .mode-btn {
+    flex: 1;
+    padding: 7px 8px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba(17,17,17,0.4);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .mode-btn.active {
+    background: #FF5A4F;
+    color: #fff;
+    box-shadow: 2px 2px 0 #111111;
+  }
+
+  body.break  .mode-btn.active { background: #8DE2C4; color: #111111; box-shadow: 2px 2px 0 #111111; }
+  body.long-break .mode-btn.active { background: #FF8FB8; color: #111111; box-shadow: 2px 2px 0 #111111; }
+
+  .mode-btn:hover:not(.active) { color: #111111; background: rgba(17,17,17,0.06); }
+
+  /* ── Ring timer ── */
+  .ring-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 24px;
+  }
+
+  @keyframes ring-pulse {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(255,90,79,0.45)); }
+    50%       { filter: drop-shadow(0 0 20px rgba(255,90,79,0.85)); }
+  }
+  @keyframes ring-pulse-break {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(141,226,196,0.5)); }
+    50%       { filter: drop-shadow(0 0 20px rgba(141,226,196,0.9)); }
+  }
+  @keyframes ring-pulse-long {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(255,143,184,0.5)); }
+    50%       { filter: drop-shadow(0 0 20px rgba(255,143,184,0.9)); }
+  }
+
+  svg.ring {
+    transform: rotate(-90deg);
+    filter: drop-shadow(0 0 10px rgba(255,90,79,0.5));
+    transition: filter 0.6s;
+  }
+
+  body.break     svg.ring { filter: drop-shadow(0 0 10px rgba(141,226,196,0.6)); }
+  body.long-break svg.ring { filter: drop-shadow(0 0 10px rgba(255,143,184,0.6)); }
+
+  body.running           svg.ring { animation: ring-pulse       2s ease-in-out infinite; }
+  body.break.running     svg.ring { animation: ring-pulse-break 2s ease-in-out infinite; }
+  body.long-break.running svg.ring { animation: ring-pulse-long 2s ease-in-out infinite; }
+
+  .ring-bg {
+    fill: rgba(255,90,79,0.07);
+    stroke: rgba(17,17,17,0.1);
+    stroke-width: 10;
+    transition: fill 0.6s;
+  }
+
+  body.break     .ring-bg { fill: rgba(141,226,196,0.1); }
+  body.long-break .ring-bg { fill: rgba(255,143,184,0.1); }
+
+  .ring-progress {
+    fill: none;
+    stroke: #FF5A4F;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear, stroke 0.6s;
+  }
+
+  body.break     .ring-progress { stroke: #8DE2C4; }
+  body.long-break .ring-progress { stroke: #FF8FB8; }
+
+  .ring-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  @keyframes tomato-pulse {
+    0%, 100% { transform: scale(1);    filter: drop-shadow(0 2px 8px rgba(255,90,79,0.4)); }
+    50%       { transform: scale(1.12); filter: drop-shadow(0 4px 14px rgba(255,90,79,0.7)); }
+  }
+
+  .tomato-icon {
+    font-size: 20px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 6px rgba(255,90,79,0.45));
+    transition: filter 0.3s;
+  }
+
+  body.running .tomato-icon { animation: tomato-pulse 2s ease-in-out infinite; }
+
+  .time-display {
+    font-family: 'Bahnschrift', 'DIN Alternate', 'Arial Narrow', sans-serif;
+    font-stretch: condensed;
+    font-size: 76px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #111111;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .session-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(17,17,17,0.38);
+  }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .btn-main {
+    padding: 13px 44px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 2.5px solid #111111;
+    border-radius: 50px;
+    cursor: pointer;
+    background: #FF5A4F;
+    color: #fff;
+    transition: all 0.15s;
+    box-shadow: 3px 3px 0 #111111;
+  }
+
+  body.break     .btn-main { background: #8DE2C4; color: #111111; }
+  body.long-break .btn-main { background: #FF8FB8; color: #111111; }
+
+  .btn-main:hover  { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #111111; }
+  .btn-main:active { transform: translate(1px,  1px);  box-shadow: 2px 2px 0 #111111; }
+
+  .btn-icon {
+    width: 42px; height: 42px;
+    border: 2.5px solid #111111;
+    border-radius: 50%;
+    background: #FFF7F3;
+    color: #111111;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    box-shadow: 2px 2px 0 #111111;
+  }
+
+  .btn-icon:hover  { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 #111111; }
+  .btn-icon:active { transform: translate(1px,  1px);  box-shadow: 1px 1px 0 #111111; }
+
+  /* ── Session dots ── */
+  .session-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 22px;
+  }
+
+  .session-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid #111111;
+    background: transparent;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .session-dot.done {
+    background: #FF5A4F;
+    box-shadow: 0 0 6px rgba(255,90,79,0.6);
+  }
+
+  /* ── Stats ── */
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    padding-top: 18px;
+    border-top: 2px solid rgba(17,17,17,0.08);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .stat-value {
+    font-family: 'Bahnschrift', 'DIN Alternate', 'Arial Narrow', sans-serif;
+    font-stretch: condensed;
+    font-size: 30px;
+    font-weight: 700;
+    color: #111111;
+    letter-spacing: 1px;
+  }
+
+  .stat-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(17,17,17,0.32);
+  }
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="titlebar">
+
+<div class="control-bar">
+  <span class="control-bar-title">🍅 Pomodoro</span>
+  <div class="control-bar-btns">
     <button class="btn-minimize" onclick="window.electronAPI?.minimize()" title="Minimize"></button>
     <button class="btn-close"    onclick="window.electronAPI?.close()"    title="Close"></button>
   </div>
-  <div class="title"><span class="tomato">🍅</span>Pomodoro</div>
+</div>
 
-  <div class="mode-tabs">
-    <button class="mode-btn active" data-mode="work"  onclick="setMode('work')">Focus</button>
-    <button class="mode-btn"        data-mode="break" onclick="setMode('break')">Short Break</button>
-    <button class="mode-btn"        data-mode="long"  onclick="setMode('long')">Long Break</button>
-  </div>
+<div class="main">
+  <div class="app">
 
-  <div class="ring-container">
-    <svg class="ring" width="220" height="220" viewBox="0 0 220 220">
-      <circle class="ring-bg" cx="110" cy="110" r="96"/>
-      <circle class="ring-progress" id="ringProgress" cx="110" cy="110" r="96"/>
-    </svg>
-    <div class="ring-inner">
-      <div class="time-display" id="timeDisplay">25:00</div>
-      <div class="session-label" id="sessionLabel">Focus Time</div>
+    <div class="mode-tabs">
+      <button class="mode-btn active" onclick="setMode('work')">Focus</button>
+      <button class="mode-btn" onclick="setMode('break')">Short Break</button>
+      <button class="mode-btn" onclick="setMode('long')">Long Break</button>
     </div>
-  </div>
 
-  <div class="controls">
-    <button class="btn-icon" onclick="reset()" title="Reset">↺</button>
-    <button class="btn-main" id="startBtn" onclick="toggle()">Start</button>
-    <button class="btn-icon" onclick="onComplete()" title="Skip">⏭</button>
-  </div>
+    <div class="ring-container">
+      <svg class="ring" width="220" height="220" viewBox="0 0 220 220">
+        <circle class="ring-bg" cx="110" cy="110" r="96"/>
+        <circle class="ring-progress" id="ringProgress" cx="110" cy="110" r="96"/>
+      </svg>
+      <div class="ring-inner">
+        <div class="tomato-icon">🍅</div>
+        <div class="time-display" id="timeDisplay">25:00</div>
+        <div class="session-label" id="sessionLabel">Focus Time</div>
+      </div>
+    </div>
 
-  <div class="stats">
-    <div class="stat">
-      <span class="stat-value" id="completedCount">0</span>
-      <span class="stat-label">Sessions</span>
+    <div class="session-dots">
+      <div class="session-dot" id="dot0"></div>
+      <div class="session-dot" id="dot1"></div>
+      <div class="session-dot" id="dot2"></div>
+      <div class="session-dot" id="dot3"></div>
     </div>
-    <div class="stat">
-      <span class="stat-value" id="totalMinutes">0</span>
-      <span class="stat-label">Minutes</span>
+
+    <div class="controls">
+      <button class="btn-icon" onclick="reset()" title="Reset">↺</button>
+      <button class="btn-main" id="startBtn" onclick="toggle()">Start</button>
+      <button class="btn-icon" onclick="skip()" title="Skip">⏭</button>
     </div>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-value" id="completedCount">0</span>
+        <span class="stat-label">Sessions</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="totalMinutes">0</span>
+        <span class="stat-label">Minutes</span>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
 const MODES = {
-  work:  { duration: 25 * 60, label: 'Focus Time',  body: '' },
-  break: { duration:  5 * 60, label: 'Short Break', body: 'break' },
-  long:  { duration: 15 * 60, label: 'Long Break',  body: 'long-break' },
+  work:  { duration: 25 * 60, label: 'Focus Time',  body: '',           tab: 0 },
+  break: { duration:  5 * 60, label: 'Short Break', body: 'break',      tab: 1 },
+  long:  { duration: 15 * 60, label: 'Long Break',  body: 'long-break', tab: 2 },
 };
 
 let mode = 'work';
 let remaining = MODES.work.duration;
+let total = MODES.work.duration;
 let running = false;
 let interval = null;
 let completed = 0;
 let totalMins = 0;
 
 const CIRCUMFERENCE = 2 * Math.PI * 96;
-const ring         = document.getElementById('ringProgress');
-const timeDisplay  = document.getElementById('timeDisplay');
-const startBtn     = document.getElementById('startBtn');
-const sessionLabel = document.getElementById('sessionLabel');
-const completedEl  = document.getElementById('completedCount');
-const totalMinsEl  = document.getElementById('totalMinutes');
-const modeButtons  = [...document.querySelectorAll('.mode-btn')];
-
+const ring = document.getElementById('ringProgress');
 ring.style.strokeDasharray = CIRCUMFERENCE;
 
 function updateRing() {
-  ring.style.strokeDashoffset = CIRCUMFERENCE * (1 - remaining / MODES[mode].duration);
+  const fraction = remaining / total;
+  ring.style.strokeDashoffset = CIRCUMFERENCE * (1 - fraction);
 }
 
 function updateDisplay() {
   const m = Math.floor(remaining / 60).toString().padStart(2, '0');
   const s = (remaining % 60).toString().padStart(2, '0');
-  timeDisplay.textContent = `${m}:${s}`;
+  document.getElementById('timeDisplay').textContent = `${m}:${s}`;
   document.title = `${m}:${s} — ${MODES[mode].label}`;
   updateRing();
 }
 
-function stop() {
-  clearInterval(interval);
-  running = false;
-  startBtn.textContent = 'Start';
+function updateDots() {
+  const inCycle = completed % 4;
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('dot' + i).classList.toggle('done', i < inCycle);
+  }
 }
 
 function setMode(m) {
-  stop();
-  const cfg = MODES[m];
+  clearInterval(interval);
+  running = false;
+  document.getElementById('startBtn').textContent = 'Start';
+
   mode = m;
-  remaining = cfg.duration;
-  document.body.className = cfg.body;
-  sessionLabel.textContent = cfg.label;
-  modeButtons.forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+  remaining = MODES[m].duration;
+  total = MODES[m].duration;
+
+  const bodyClasses = [MODES[m].body].filter(Boolean);
+  document.body.className = bodyClasses.join(' ');
+  updateDots();
+  document.getElementById('sessionLabel').textContent = MODES[m].label;
+
+  document.querySelectorAll('.mode-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === MODES[m].tab);
+  });
+
   updateDisplay();
 }
 
@@ -323,10 +439,12 @@ function toggle() {
   if (running) {
     clearInterval(interval);
     running = false;
-    startBtn.textContent = 'Resume';
+    document.getElementById('startBtn').textContent = 'Resume';
+    document.body.classList.remove('running');
   } else {
     running = true;
-    startBtn.textContent = 'Pause';
+    document.getElementById('startBtn').textContent = 'Pause';
+    document.body.classList.add('running');
     interval = setInterval(tick, 1000);
   }
 }
@@ -335,18 +453,22 @@ function tick() {
   remaining--;
   updateDisplay();
   if (remaining <= 0) {
-    stop();
+    clearInterval(interval);
+    running = false;
+    document.getElementById('startBtn').textContent = 'Start';
     onComplete();
   }
 }
 
 function onComplete() {
   beep();
+  document.body.classList.remove('running');
   if (mode === 'work') {
     completed++;
-    totalMins += MODES.work.duration / 60;
-    completedEl.textContent = completed;
-    totalMinsEl.textContent = totalMins;
+    totalMins += 25;
+    document.getElementById('completedCount').textContent = completed;
+    document.getElementById('totalMinutes').textContent = totalMins;
+    updateDots();
     setMode(completed % 4 === 0 ? 'long' : 'break');
   } else {
     setMode('work');
@@ -354,10 +476,15 @@ function onComplete() {
 }
 
 function reset() {
-  stop();
-  remaining = MODES[mode].duration;
+  clearInterval(interval);
+  running = false;
+  remaining = total;
+  document.getElementById('startBtn').textContent = 'Start';
+  document.body.classList.remove('running');
   updateDisplay();
 }
+
+function skip() { onComplete(); }
 
 function beep() {
   try {
